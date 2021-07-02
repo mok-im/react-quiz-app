@@ -2,7 +2,6 @@ import React from 'react';
 import classes from './Select'
 
 const Select = props => {
-
   const htmlFor = `${props.label}-${Math.random()}`
 
   return (
@@ -25,7 +24,7 @@ const Select = props => {
         })}
       </select>
     </div>
-  );
-};
+  )
+}
 
-export default Select;
+export default Select

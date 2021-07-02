@@ -5,31 +5,32 @@ import { createControl, validate, validateForm } from '../../Form/formFramework'
 import Input from '../../components/UI/Input/Input'
 import Select from '../../components/UI/Select/Select'
 import Auxiliary from '../../hoc/Auxiliary/Auxiliary'
+import axios from '../../axios/axios-quiz'
+
+
 
 function createOptionControl(number) {
   return createControl({
-    label: `Question ${number}`,
-    errorMessage: 'Field cannot be empty',
+    label: `Вариант ${number}`,
+    errorMessage: 'Значение не может быть пустым',
     id: number
-  }, { required: true }
-  )
+  }, { required: true })
 }
 
 function createFormControls() {
   return {
     question: createControl({
-      label: 'Type of question',
-      errorMessage: 'Field cannot be empty'
+      label: 'Введите вопрос',
+      errorMessage: 'Вопрос не может быть пустым'
     }, { required: true }),
     option1: createOptionControl(1),
     option2: createOptionControl(2),
     option3: createOptionControl(3),
-    option4: createOptionControl(4),
+    option4: createOptionControl(4)
   }
 }
 
-
-class QuizCreator extends Component {
+export default class QuizCreator extends Component {
 
   state = {
     quiz: [],
@@ -39,13 +40,15 @@ class QuizCreator extends Component {
   }
 
   submitHandler = event => {
-    event.preventDefault();
+    event.preventDefault()
   }
 
   addQuestionHandler = event => {
-    event.preventDefault();
+    event.preventDefault()
+
     const quiz = this.state.quiz.concat()
     const index = quiz.length + 1
+
     const { question, option1, option2, option3, option4 } = this.state.formControls
 
     const questionItem = {
@@ -61,6 +64,7 @@ class QuizCreator extends Component {
     }
 
     quiz.push(questionItem)
+
     this.setState({
       quiz,
       isFormValid: false,
@@ -69,9 +73,22 @@ class QuizCreator extends Component {
     })
   }
 
-  createQuizHandler = event => {
+  createQuizHandler = async event => {
     event.preventDefault()
-    console.log(this.state.quiz);
+
+    try {
+      await axios.post('/quizes.json', this.state.quiz)
+
+      this.setState({
+        quiz: [],
+        isFormValid: false,
+        rightAnswerId: 1,
+        formControls: createFormControls()
+      })
+
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   changeHandler = (value, controlName) => {
@@ -93,6 +110,7 @@ class QuizCreator extends Component {
   renderControls() {
     return Object.keys(this.state.formControls).map((controlName, index) => {
       const control = this.state.formControls[controlName]
+
       return (
         <Auxiliary key={controlName + index}>
           <Input
@@ -112,30 +130,29 @@ class QuizCreator extends Component {
 
   selectChangeHandler = event => {
     this.setState({
-      rightAnswerId: event.target.value
+      rightAnswerId: +event.target.value
     })
   }
+
   render() {
     const select = <Select
-      label="Choose the right answer"
+      label="Выберите правильный ответ"
       value={this.state.rightAnswerId}
       onChange={this.selectChangeHandler}
       options={[
         { text: 1, value: 1 },
         { text: 2, value: 2 },
         { text: 3, value: 3 },
-        { text: 4, value: 4 },
+        { text: 4, value: 4 }
       ]}
     />
 
     return (
       <div className={classes.QuizCreator}>
         <div>
-          <h1>Create a new quiz</h1>
-          <form onSubmit={this.submitHandler}>
+          <h1>Создание теста</h1>
 
-            <input />
-            <hr />
+          <form onSubmit={this.submitHandler}>
 
             {this.renderControls()}
 
@@ -146,7 +163,7 @@ class QuizCreator extends Component {
               onClick={this.addQuestionHandler}
               disabled={!this.state.isFormValid}
             >
-              Add question
+              Добавить вопрос
             </Button>
 
             <Button
@@ -154,17 +171,12 @@ class QuizCreator extends Component {
               onClick={this.createQuizHandler}
               disabled={this.state.quiz.length === 0}
             >
-              Create quiz
+              Создать тест
             </Button>
+
           </form>
         </div>
       </div>
-    );
+    )
   }
 }
-
-export default QuizCreator;
-
-
-
-
