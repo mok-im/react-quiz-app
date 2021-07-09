@@ -14,8 +14,15 @@
 }
 
 .AuthForm {
-  background: #eee;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  background-image: linear-gradient(
+    to top,
+    #5d6bb8,
+    #5b7cc2,
+    #5e8dca,
+    #679dcf,
+    #75acd4
+  );
+  box-shadow: 10px 33px 44px rgba(0, 0, 0, 0.5);
   padding: 15px;
-  border: radius 5px;
+  border-radius: 5px;
 }
